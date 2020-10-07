@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 11, 1, 4,7, 3
+=======
+
+>>>>>>> upstream/master
 # SQL Lecture 
 
 ### Getting setup on BigQuery

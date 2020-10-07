@@ -141,7 +141,36 @@ TOM STEYER 2020
 	```
 7. Write a query that has, in the US region only, the total spend in usd for each advertiser_name and how many ads they ran. (Hint, you're going to have to join tables for this one). 
 	```
-		[YOUR QUERY HERE]
+	teacher answers
+		WITH
+	  TABLE_A AS (
+	  SELECT
+	    advertiser_name,
+	    COUNT(DISTINCT ad_id) AS n_ads
+	  FROM
+	    `bigquery-public-data.google_political_ads.creative_stats`
+	  WHERE
+	    regions = "US"
+	  GROUP BY
+	    advertiser_name),
+	  TABLE_B AS (
+	  SELECT
+	    advertiser_name,
+	    SUM(spend_usd) AS spend
+	  FROM
+	    `bigquery-public-data.google_political_ads.advertiser_weekly_spend`
+	  GROUP BY
+	    advertiser_name )
+	SELECT
+	  A.*,
+	  B.spend,
+	FROM
+	  TABLE_A AS A
+	JOIN
+	  TABLE_B AS B
+	ON
+	  A.advertiser_name = B.advertiser_name
+
 	```
 8. For each advertiser_name, find the average spend per ad. 
 	```
@@ -154,6 +183,68 @@ TOM STEYER 2020
   	advertiser_name
 	ORDER BY 
  	total_spending DESC 
+Teacher answers
+
+WITH
+	  TABLE_A AS (
+	  SELECT
+	    advertiser_name,
+	    COUNT(DISTINCT ad_id) AS n_ads
+	  FROM
+	    `bigquery-public-data.google_political_ads.creative_stats`
+	  WHERE
+	    regions = "US"
+	  GROUP BY
+	    advertiser_name),
+	  TABLE_B AS (
+	  SELECT
+	    advertiser_name,
+	    SUM(spend_usd) AS spend
+	  FROM
+	    `bigquery-public-data.google_political_ads.advertiser_weekly_spend`
+	  GROUP BY
+	    advertiser_name )
+	SELECT
+	  A.*,
+	  B.spend,
+	FROM
+	  TABLE_A AS A
+	JOIN
+	  TABLE_B AS B
+	ON
+	  A.advertiser_name = B.advertiser_name
+# ANSWER IS JEXAN LLC
+	WITH
+	  TABLE_A AS (
+	  SELECT
+	    advertiser_name,
+	    COUNT(DISTINCT ad_id) AS n_ads
+	  FROM
+	    `bigquery-public-data.google_political_ads.creative_stats`
+	  WHERE
+	    regions = "US"
+	  GROUP BY
+	    advertiser_name),
+	  TABLE_B AS (
+	  SELECT
+	    advertiser_name,
+	    SUM(spend_usd) AS spend
+	  FROM
+	    `bigquery-public-data.google_political_ads.advertiser_weekly_spend`
+	  GROUP BY
+	    advertiser_name )
+	SELECT
+	  A.*,
+	  B.spend,
+	  B.spend / A.n_ads as avg_spend_per_ad
+	FROM
+	  TABLE_A AS A
+	JOIN
+	  TABLE_B AS B
+	ON
+	  A.advertiser_name = B.advertiser_name
+	WHERE B.spend / A.n_ads > 0
+	ORDER BY avg_spend_per_ad
 	```
 10. Which advertiser_name had the lowest average spend per ad that was at least above 0. 
 	``` 
